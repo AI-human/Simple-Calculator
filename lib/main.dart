@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart'; // equation solver flutter package
 
 void main() {
   runApp(Calculator());
@@ -26,6 +27,54 @@ class SimpleCalculator extends StatefulWidget {
 }
 
 class _SimpleCalculatorState extends State<SimpleCalculator> {
+  String equation = "0";
+  String result = "0";
+  String expression = "";
+  double equationFontsize = 38.0, resultFontsize = 48;
+
+  buttonPressed(String buttonText) {
+    // function for button to work
+    setState(() {
+      if (buttonText == 'C') {
+        equation = "0";
+        result = "0";
+        equationFontsize = 38.0;
+        resultFontsize = 48.0;
+      } else if (buttonText == '⌫') {
+        equationFontsize = 48.0;
+        resultFontsize = 38.0;
+        equation = equation.substring(0, equation.length - 1);
+        if (equation == "") {
+          equation = "0";
+        }
+      } else if (buttonText == "=") {
+        equationFontsize = 38.0;
+        resultFontsize = 48.0;
+        expression = equation;
+        expression = equation.replaceAll('x', '*');
+        expression = expression.replaceAll('÷', '/');
+
+        try {
+          // equation solver flutter package
+          Parser p = Parser();
+          Expression exp = p.parse(expression);
+          ContextModel cm = ContextModel();
+          result = '${exp.evaluate(EvaluationType.REAL, cm)}';
+        } catch (e) {
+          result = "Error";
+        }
+      } else {
+        equationFontsize = 48.0;
+        resultFontsize = 38.0;
+        if (equation == "0") {
+          equation = buttonText;
+        } else {
+          equation += buttonText;
+        }
+      }
+    });
+  }
+
   Widget buildButton(
       String buttonText, double buttonHeight, Color buttonColor) {
     // can use buildButton widget/function to create lots of button
@@ -41,7 +90,7 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
           ),
           padding: EdgeInsets.all(16.0),
         ),
-        onPressed: () => print("yes"),
+        onPressed: () => buttonPressed(buttonText),
         child: Text(
           buttonText,
           style: TextStyle(
@@ -66,21 +115,23 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
           Container(
             alignment: Alignment.centerRight,
             padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+            color: Color.fromARGB(221, 255, 255, 255),
             child: Text(
-              "0",
-              style: TextStyle(fontSize: 38.0),
+              equation,
+              style: TextStyle(fontSize: equationFontsize),
             ),
           ),
           Container(
             alignment: Alignment.centerRight,
             padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+            color: Color.fromARGB(221, 255, 255, 255),
             child: Text(
-              "0",
-              style: TextStyle(fontSize: 48.0),
+              result,
+              style: TextStyle(fontSize: resultFontsize),
             ),
           ),
           Expanded(
-            // create a space
+            // create a spacec
             child: Divider(),
           ),
           Row(
@@ -92,28 +143,28 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
                   children: [
                     TableRow(children: [
                       buildButton("C", 1, Color.fromARGB(255, 255, 0, 0)),
-                      buildButton("%", 1, Color.fromARGB(255, 255, 22, 6)),
-                      buildButton("⌫", 1, Color.fromARGB(255, 255, 22, 6)),
+                      buildButton("%", 1, Colors.blueAccent),
+                      buildButton("⌫", 1, Colors.blueAccent),
                     ]),
                     TableRow(children: [
-                      buildButton("7", 1, Color.fromARGB(255, 255, 22, 6)),
-                      buildButton("8", 1, Color.fromARGB(255, 255, 22, 6)),
-                      buildButton("9", 1, Color.fromARGB(255, 255, 22, 6)),
+                      buildButton("7", 1, Colors.black87),
+                      buildButton("8", 1, Colors.black87),
+                      buildButton("9", 1, Colors.black87),
                     ]),
                     TableRow(children: [
-                      buildButton("4", 1, Color.fromARGB(255, 255, 22, 6)),
-                      buildButton("5", 1, Color.fromARGB(255, 255, 22, 6)),
-                      buildButton("6", 1, Color.fromARGB(255, 255, 22, 6)),
+                      buildButton("4", 1, Colors.black87),
+                      buildButton("5", 1, Colors.black87),
+                      buildButton("6", 1, Colors.black87),
                     ]),
                     TableRow(children: [
-                      buildButton("3", 1, Color.fromARGB(255, 255, 22, 6)),
-                      buildButton("2", 1, Color.fromARGB(255, 255, 22, 6)),
-                      buildButton("1", 1, Color.fromARGB(255, 255, 22, 6)),
+                      buildButton("3", 1, Colors.black87),
+                      buildButton("2", 1, Colors.black87),
+                      buildButton("1", 1, Colors.black87),
                     ]),
                     TableRow(children: [
-                      buildButton("00", 1, Color.fromARGB(255, 255, 22, 6)),
-                      buildButton("0", 1, Color.fromARGB(255, 255, 22, 6)),
-                      buildButton(".", 1, Color.fromARGB(255, 255, 22, 6)),
+                      buildButton("00", 1, Colors.black87),
+                      buildButton("0", 1, Colors.black87),
+                      buildButton(".", 1, Colors.black87),
                     ]),
                   ],
                 ),
@@ -135,7 +186,7 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
                       buildButton("+", 1, Colors.blueAccent),
                     ]),
                     TableRow(children: [
-                      buildButton("=", 1, Colors.blueAccent),
+                      buildButton("=", 1, Color.fromARGB(255, 255, 0, 0)),
                     ]),
                   ],
                 ),
